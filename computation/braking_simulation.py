@@ -21,12 +21,12 @@ import csv
 import os
 
 class Bicycle:
-	def __init__(self, l, h, r, tbf, tbb, u, m):
+	def __init__(self, l, h, r, tbf, tbb, rbf, rbb, u, m):
 		self.l = l
 		self.h = h
 		self.r = r
-		self.tbf = tbf
-		self.tbb = tbb
+		self.bff = tbf / rbf
+		self.bfb = tbb / rbb
 		self.u = u
 		self.m = m
 		self.a = 0
@@ -39,7 +39,7 @@ class Bicycle:
 	def static_reaction_rr(self):
 		return self.weight - self.static_reaction_fr()
 	
-	def dynamic_reaction_fr(self):
+	def dynamic_reaction_fr(self, *args):
 		return (self.weight * self.d + self.m * self.a * self.h) / self.l
 
 	def dynamic_reaction_rr(self):
@@ -53,8 +53,8 @@ class Bicycle:
 
 	def max_real_braking_force_fr(self): 
 		out =  self.max_potential_braking_force_fr()
-		if out >= (self.tbf / 0.09):
-			return self.tbf / 0.09
+		if out >= (self.bfb / 0.09):
+			return self.bfb / 0.09
 		elif out <= 0:
 			return 0
 		else:
@@ -62,8 +62,8 @@ class Bicycle:
 	
 	def max_real_braking_force_rr(self):
 		out = self.max_potential_braking_force_rr()
-		if out >= (self.tbb / 0.08):
-			return self.tbb / 0.08
+		if out >= (self.bff):
+			return self.bff 
 		elif out <= 0:
 			return 0
 		else:
@@ -76,16 +76,31 @@ class Bicycle:
 		return self.max_real_braking_force_net() / self.m
 
 class Simulation(Bicycle):
-	def __init__(self, l, h, r, tbf, tbb, u, m, v, incline, filepath):
-		Bicycle.__init__(self, l, h, r, tbf, tbb, u, m)
+	def __init__(self, l, h, r, tbf, tbb, rbb, rbf, u, m, v, incline, filepath):
+		Bicycle.__init__(self, l, h, r, tbf, tbb, rbb, rbf, u, m)
 		self.v = v
 		self.incline = incline
 		self.filepath = filepath
 
+	def load_front(self, bf):
+		return (self.weight * self.d + bf * self.h) / self.l
+
+	def load_rear(self, bf):	# bf - braking force	
+		return self.weight - self.load_front(bf)
+
+	def max_braking_force_net(self):
+		bf = self.bff + self.bfb
+		max_braking = self.weight * self.u
+		if self.load_rear(bf) < 0:
+			print(bf, self.load_rear(bf), self.load_front(bf))
+			bf -= 1		# optimize 
+		print(bf, self.load_rear(bf))
+		return bf
+
 	def generate_directory(self):
 		dir_count = 0
 		directory = 'sim_' + str(dir_count)
-		params = 'l = '+str(self.l)+'\nh = '+str(self.h)+'\nr = '+str(self.r)+'\ntbf = '+str(self.tbf)+'\ntbb = '+str(self.tbb)+'\nu = '+str(self.u)+'\nm = '+str(self.m)
+		params = 'l = '+str(self.l)+'\nh = '+str(self.h)+'\nr = '+str(self.r)+'\ntbf = '+str(self.bff)+'\ntbb = '+str(self.bfb)+'\nu = '+str(self.u)+'\nm = '+str(self.m)
 		for subdir, dirs, files in os.walk(self.filepath):
 				directory = 'sim_' + str(dir_count)
 				for i in dirs:
@@ -118,7 +133,7 @@ class Simulation(Bicycle):
 				while v > 0:
 					ff = self.max_real_braking_force_fr()
 					fr = self.max_real_braking_force_rr()
-					fn = self.max_real_braking_force_net()
+					fn = self.max_braking_force_net()
 					self.a = fn / self.m
 					v -= self.a * 0.1
 					s = abs(0.5 * self.a * 0.01)
@@ -132,5 +147,5 @@ class Simulation(Bicycle):
 			v = self.v
 	
 if __name__ == "__main__":
-	sim = Simulation(1.2, 0.8, 0.36, 69.9, 62.3, 0.8, 85, 50, 0, '/home/ikrz/extended_essay/simulations/')
+	sim = Simulation(1.1, 0.8, 0.36, 69.9, 62.3, 0.09, 0.08, 0.8, 85, 50, 0, '/home/ikrz/extended_essay/simulations/')
 	sim.generate_data()
