@@ -87,11 +87,10 @@ class Simulation(Bicycle):
 		directory = 'sim_' + str(dir_count)
 		params = 'l = '+str(self.l)+'\nh = '+str(self.h)+'\nr = '+str(self.r)+'\ntbf = '+str(self.tbf)+'\ntbb = '+str(self.tbb)+'\nu = '+str(self.u)+'\nm = '+str(self.m)
 		for subdir, dirs, files in os.walk(self.filepath):
-			for i in dirs:
 				directory = 'sim_' + str(dir_count)
-				if i == directory:
-					dir_count += 1
-		
+				for i in dirs:
+					if i == directory:
+						dir_count += 1
 		path = os.path.join(self.filepath, directory)
 		os.mkdir(path)
 		path = os.path.join(self.filepath, directory, 'info')
@@ -109,21 +108,23 @@ class Simulation(Bicycle):
 	def generate_data(self):
 		data_path = self.generate_directory()
 		v = self.v
+		self.a = 5
 		t = ff = fr = fn = 0
 		while self.d < self.l:
-			path = os.path.join(data_path, str(self.d) + '.csv')
+			path = os.path.join(data_path, str('{0:.2f}'.format(self.d)) + '.csv')
 			with open(path, 'w') as f:
 				csv_wr = csv.writer(f, delimiter = ',')
 				csv_wr.writerow(['t'] + ['a'] + ['v'] + ['s'] + ['F_n'] + ['F_f'] +['F_r'])
 				while v > 0:
 					ff = self.max_real_braking_force_fr()
 					fr = self.max_real_braking_force_rr()
-					fn = self.m * self.a - self.max_real_braking_force_net() 
+					fn = self.max_real_braking_force_net()
 					self.a = fn / self.m
-					v += self.a * 0.1
+					v -= self.a * 0.1
 					s = abs(0.5 * self.a * 0.01)
 					t += 0.1
-					print(self.a)
+					# ADDITIONAL LOGIC FOR REAR WHEEL LIFT-OFF
+					# ONE STEP AHEAD -> ITERATION -> GETTING BEST RESULT -> C++?
 					csv_wr.writerow(["{0:.2f}".format(t)]+["{0:.2f}".format(self.a)]+["{0:.2f}".format(v)]+["{0:.2f}".format(s)]+["{0:.2f}".format(fn)]+["{0:.2f}".format(ff)]+["{0:.2f}".format(fr)])
 			self.d += 0.01
 			t = 0
