@@ -99,7 +99,7 @@ class Simulation(Bicycle):
 		return bf
 
 	def generate_directory(self):
-		dir_count = 0
+		dir_count = 1
 		directory = 'sim_' + str(dir_count)
 		params = 'l = '+str(self.l)+'\nh = '+str(self.h)+'\nr = '+str(self.r)+'\ntbf = '+str(self.bff)+'\ntbb = '+str(self.bfb)+'\nu = '+str(self.u)+'\nm = '+str(self.m)
 		for subdir, dirs, files in os.walk(self.filepath):
@@ -126,7 +126,7 @@ class Simulation(Bicycle):
 	def conspect(self):
 		with open(self.work_dir + '/info/conspect.csv', 'a') as f:
 			csv_wr = csv.writer(f, delimiter = ',')
-			csv_wr.writerow([str("{0:.2f}".format(self.d)) + '.csv'] + ["{0:.2f}".format(self.t)] + ["{0:.2f}".format(self.s)])
+			csv_wr.writerow(["{0:.2f}".format(self.d)] + ["{0:.2f}".format(self.t)] + ["{0:.2f}".format(self.s)])
 
 	def generate_data(self):
 		self.generate_directory()
@@ -152,13 +152,36 @@ class Simulation(Bicycle):
 			v = self.v
 			self.a = self.t = self.s = 0
 
-	class Data_processing:
-		def __init__(work_dir):
-			self.work_dir = work_dir
+class Data_processing:
+	def __init__(self, work_dir):
+		self.work_dir = work_dir
 
-		def plot_conspect(self):
-			for subdir, dirs, files in os.walk(self.filepath):
+	def plot_conspect(self):
+		d = np.zeros(90)
+		t = np.zeros(90)
+		s = np.zeros(90)
+		i = 0
+		path = os.path.join(self.work_dir, 'info', 'conspect.csv')
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+			for row in csv_r:
+				d[i] = float(row[0])
+				t[i] = float(row[1])
+				s[i] = float(row[2])
+				i += 1
+		print(d,t,s)
+		plt.xlabel('d')
+		plt.plot(d, t, d, s, 'm')
+		plt.show()
+
+	def find_max_braking(self):
+		path = os.path.join(self.work_dir, 'data')
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+
 
 if __name__ == "__main__":
 	sim = Simulation(1.1, 0.8, 0.36, 69.9, 62.3, 0.09, 0.08, 0.8, 85, 10, 0, '/home/ikrz/extended_essay/simulations/')
-	sim.generate_data()
+	#sim.generate_data()
+	dp = Data_processing('/home/ikrz/extended_essay/simulations/sim_1')
+	dp.plot_conspect()
