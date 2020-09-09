@@ -115,8 +115,6 @@ class Simulation(Bicycle):
 		with open(path + '/params.txt', 'w') as f:
 			f.write(params)
 
-		with open(path + '/conspect.csv', 'w') as f:
-			f.write('d,t,s\n')
 		
 		path = os.path.join(self.work_dir, 'data')
 		os.mkdir(path)
@@ -137,7 +135,6 @@ class Simulation(Bicycle):
 			path = os.path.join(self.work_dir, 'data', str('{0:.2f}'.format(self.d)) + '.csv')
 			with open(path, 'w') as f:
 				csv_wr = csv.writer(f, delimiter = ',')
-				csv_wr.writerow(['t'] + ['a'] + ['v'] + ['s'] + ['F_n'] + ['F_f'] +['F_r'])
 				while v > 0:
 					ff = self.max_real_braking_force_fr()
 					fr = self.max_real_braking_force_rr()
@@ -174,14 +171,48 @@ class Data_processing:
 		plt.plot(d, t, d, s, 'm')
 		plt.show()
 
-	def find_max_braking(self):
-		path = os.path.join(self.work_dir, 'data')
+	def find_best_braking(self):
+		data = np.zeros([100,3], float)
+		i = 0
+		path = os.path.join(self.work_dir, 'info', 'conspect.csv')
 		with open(path, 'r') as f:
 			csv_r = csv.reader(f, delimiter = ',')
+			for row in csv_r:
+				for j in range(0,3):
+					data[i][j] = row[j]
+				i += 1
+		
+		min_t = 0
+		min_d = 0
+		for i in data:
+			if i[1] > min_t:
+				min_t = i[1]
+				min_d = i[0]
+		
+		return str(str(min_d) + '.csv')
+
+	def plot_best_braking(self):
+		t = np.zeros(100, float)
+		a = np.zeros(100, float)
+		s = np.zeros(100, float)
+		f = np.zeros(100, float)
+		path = os.path.join(self.work_dir, 'data', self.find_best_braking())
+		i = 0
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+			for row in csv_r:
+				t[i] = float(row[0])
+				a[i] = float(row[1])
+				s[i] = float(row[2])
+				#f[i] = float(row[3])
+				i += 1
+		plt.plot(t, a, t, s, t, f)
+		plt.show()
 
 
 if __name__ == "__main__":
 	sim = Simulation(1.1, 0.8, 0.36, 69.9, 62.3, 0.09, 0.08, 0.8, 85, 10, 0, '/home/ikrz/extended_essay/simulations/')
 	#sim.generate_data()
 	dp = Data_processing('/home/ikrz/extended_essay/simulations/sim_1')
-	dp.plot_conspect()
+	print(dp.find_best_braking())
+	dp.plot_best_braking()
