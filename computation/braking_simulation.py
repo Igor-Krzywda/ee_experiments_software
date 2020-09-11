@@ -83,6 +83,7 @@ class Simulation(Bicycle):
 		self.filepath = filepath
 		self.s = 0
 		self.t = 0
+		self.a_avg = 0
 		self.work_dir = ''
 
 	def load_front(self, bf):
@@ -124,7 +125,7 @@ class Simulation(Bicycle):
 	def conspect(self):
 		with open(self.work_dir + '/info/conspect.csv', 'a') as f:
 			csv_wr = csv.writer(f, delimiter = ',')
-			csv_wr.writerow(["{0:.2f}".format(self.d)] + ["{0:.2f}".format(self.t)] + ["{0:.2f}".format(self.s)])
+			csv_wr.writerow(["{0:.2f}".format(self.d)] + ["{0:.2f}".format(self.t)] + ["{0:.2f}".format(self.s)] + ["{0:.2f}".format(self.avg_a)])
 
 	def generate_data(self):
 		self.generate_directory()
@@ -144,10 +145,11 @@ class Simulation(Bicycle):
 					self.s += v * 0.1 + abs(0.5 * self.a * 0.01)
 					self.t += 0.1
 					csv_wr.writerow(["{0:.2f}".format(self.t)]+["{0:.2f}".format(self.a)]+["{0:.2f}".format(v)]+["{0:.2f}".format(self.s)]+["{0:.2f}".format(fn)]+["{0:.2f}".format(ff)]+["{0:.2f}".format(fr)])
+			self.avg_a = self.v / self.t
 			self.conspect()
 			self.d += 0.01
 			v = self.v
-			self.a = self.t = self.s = 0
+			self.a = self.t = self.s = self.avg_a = 0
 
 class Data_processing:
 	def __init__(self, work_dir):
@@ -157,6 +159,7 @@ class Data_processing:
 		d = np.zeros(90)
 		t = np.zeros(90)
 		s = np.zeros(90)
+		a = np.zeros(90)
 		i = 0
 		path = os.path.join(self.work_dir, 'info', 'conspect.csv')
 		with open(path, 'r') as f:
@@ -165,10 +168,11 @@ class Data_processing:
 				d[i] = float(row[0])
 				t[i] = float(row[1])
 				s[i] = float(row[2])
+				a[i] = float(row[3])
 				i += 1
 		print(d,t,s)
 		plt.xlabel('d')
-		plt.plot(d, t, d, s, 'm')
+		plt.plot(d, t, d, s, d, a, 'm')
 		plt.show()
 
 	def find_best_braking(self):
@@ -181,15 +185,16 @@ class Data_processing:
 				for j in range(0,3):
 					data[i][j] = row[j]
 				i += 1
-		
+		print(data)
+
 		min_t = 0
 		min_d = 0
 		for i in data:
-			if i[1] > min_t:
+			if i[1] < min_t:
 				min_t = i[1]
 				min_d = i[0]
 		
-		return str(str(min_d) + '.csv')
+		return str('{0:.2f}'.format(min_d)) + '.csv'
 
 	def plot_best_braking(self):
 		t = np.zeros(100, float)
@@ -201,10 +206,10 @@ class Data_processing:
 		with open(path, 'r') as f:
 			csv_r = csv.reader(f, delimiter = ',')
 			for row in csv_r:
-				t[i] = float(row[0])
-				a[i] = float(row[1])
-				s[i] = float(row[2])
-				#f[i] = float(row[3])
+				t[i] = row[0]
+				a[i] = row[1]
+				s[i] = row[2]
+				#f[i] = row[3]
 				i += 1
 		plt.plot(t, a, t, s, t, f)
 		plt.show()
@@ -213,6 +218,7 @@ class Data_processing:
 if __name__ == "__main__":
 	sim = Simulation(1.1, 0.8, 0.36, 69.9, 62.3, 0.09, 0.08, 0.8, 85, 10, 0, '/home/ikrz/extended_essay/simulations/')
 	#sim.generate_data()
-	dp = Data_processing('/home/ikrz/extended_essay/simulations/sim_1')
-	print(dp.find_best_braking())
-	dp.plot_best_braking()
+	dp = Data_processing('/home/ikrz/extended_essay/simulations/sim_2')
+	dp.plot_conspect()
+	#print(dp.find_best_braking())
+	#dp.plot_best_braking()
