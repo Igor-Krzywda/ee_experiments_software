@@ -194,7 +194,7 @@ class Simulation():
 		files = []
 		arr_height = self.arr_size()
 		arr_width = 1
-		file_count, arg_count = 0, 0 
+		arg_count = 0
 		arg_stat = np.zeros(3)
 		for a in args:
 			if a == 'a' :
@@ -211,22 +211,17 @@ class Simulation():
 				arg_count += 1
 			else:
 				files.append(a)
-				file_count += 1
-		arr_width *= file_count
 		data = np.zeros([arr_height, arr_width], dtype = float)
-
+		
 		for f in files:
-			k, i = 0, 0
+			i = 0
 			path = f + '/info/' + f + '.csv'
 			with open(path, 'r') as fl:
 				csv_r = csv.reader(fl, delimiter = ',')
 				for row in csv_r:
-					print(row)
-					j = k
-					print(j)
+					j = 0
 					if arg_stat[0] == 1:
 						j += 1
-						print(j)
 						data[i,j] = float(row[3])
 					if arg_stat[1] == 1:
 						j += 1
@@ -236,12 +231,68 @@ class Simulation():
 						data[i,j] = float(row[2])
 					data[i,0] = float(row[0])
 					i += 1
-			k = i * arg_count
 			print(data)
-			plt.plot(data[:,0], data[:,1])	
+			k = 0
+			if arg_stat[0] == 1:
+				k += 1
+				ax_label = 'a - ' + f
+				plt.plot(data[:,0], data[:,k], label = ax_label) 
+				plt.legend(ax_label)
+			elif arg_stat[1] == 1:
+				k += 1
+				ax_label = 't - ' + f
+				plt.plot(data[:,0], data[:,k], label = ax_label)
+			if arg_stat[2] == 1:
+				k += 1
+				ax_label = 's - ' + f
+				plt.plot(data[:,0], data[:,k], label = ax_label) 
+				
+			for i in range(0, arr_height):
+				for j in range(1, arr_width):
+					data[i,j] = 0
+		plt.legend(loc = 'upper right')
+		plt.xlabel('d[m]')
 		plt.show()
+
+	def find_best_braking(self, name):
+		min_t = 100
+		d = 0
+		result = list()
+		path = name + '/info/' + name + '.csv'
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+			for row in csv_r:
+				if float(row[1]) < min_t:
+					min_t = float(row[1])
+					d = row[0]
+		result.append(d)
+		result.append(min_t)
+		print(result)
+		self.plot_best_braking(name, d)
+		return result
+
+	def plot_best_braking(self, filename, d):
+		path = filename + '/data/' + d + '.csv'
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+			size = sum(1 for row in csv_r)
+			data = np.zeros([size, 5], dtype = float)
+			i = 0
+		with open(path, 'r') as f:
+			csv_r = csv.reader(f, delimiter = ',')
+			for row in csv_r:
+				for j in range(0,5):
+					data[i,j] = row[j]
+				i += 1
+		print(data)
+		plt.plot(data[:,0], data[:,1], data[:,0], data[:,2], data[:,0], data[:,3])
+		plt.legend(['a', 'v', 's'])
+		plt.show()
+				
+		
 
 if __name__ == "__main__":
 	sim = Simulation('sample_csv.csv', 'g')
+	sim.find_best_braking('my_bike')
 	#sim.generate_data()
-	sim.plot_conspects('a', 'my_bike', 'bike_2')
+	#sim.plot_conspects('s', 'my_bike', 'bike_2')
