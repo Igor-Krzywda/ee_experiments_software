@@ -1,0 +1,36 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [2][-]{subsection.1.1}{Context}{section.1}% 2
+\BOOKMARK [2][-]{subsection.1.2}{The goal of the research}{section.1}% 3
+\BOOKMARK [1][-]{section.2}{Theoretical analysis of braking a bicycle}{}% 4
+\BOOKMARK [2][-]{subsection.2.1}{Rules and assumptions for the analysis}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.2}{Theoretical model of bicycle and cyclist}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.3}{Force distribution on the axles}{section.2}% 7
+\BOOKMARK [3][-]{subsubsection.2.3.1}{Cyclist static or moving at constant speed}{subsection.2.3}% 8
+\BOOKMARK [3][-]{subsubsection.2.3.2}{Cyclist decelerating}{subsection.2.3}% 9
+\BOOKMARK [1][-]{section.3}{Analytical explanation of safe braking}{}% 10
+\BOOKMARK [2][-]{subsection.3.1}{Maximum potential braking force}{section.3}% 11
+\BOOKMARK [2][-]{subsection.3.2}{Keeping rear wheel from lifing off}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.3}{Preventing skidding}{section.3}% 13
+\BOOKMARK [1][-]{section.4}{Combining theoretical model with geometry of a bicycle}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Finding effective horizontal range of motion}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Finding the lowest possible ride height}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.3}{Finding optimum height for pedalling}{section.4}% 17
+\BOOKMARK [1][-]{section.5}{Finding the position for the most effective braking}{}% 18
+\BOOKMARK [2][-]{subsection.5.1}{Finding theoretical maximum}{section.5}% 19
+\BOOKMARK [2][-]{subsection.5.2}{Finding realistic values for braking}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.3}{Other factors impacting braking}{section.5}% 21
+\BOOKMARK [3][-]{subsubsection.5.3.1}{Friction coefficient between tires and ground}{subsection.5.3}% 22
+\BOOKMARK [3][-]{subsubsection.5.3.2}{Seat height}{subsection.5.3}% 23
+\BOOKMARK [3][-]{subsubsection.5.3.3}{Mass}{subsection.5.3}% 24
+\BOOKMARK [1][-]{section.6}{Real-life applications}{}% 25
+\BOOKMARK [2][-]{subsection.6.1}{Emergency braking}{section.6}% 26
+\BOOKMARK [2][-]{subsection.6.2}{Bike-fitting}{section.6}% 27
+\BOOKMARK [2][-]{subsection.6.3}{Choosing parts}{section.6}% 28
+\BOOKMARK [2][-]{subsection.6.4}{Unambigous tool for analysing athletes' performance}{section.6}% 29
+\BOOKMARK [1][-]{section.7}{Issues with the analysis}{}% 30
+\BOOKMARK [2][-]{subsection.7.1}{Expressing the problem in centre of the mass only}{section.7}% 31
+\BOOKMARK [2][-]{subsection.7.2}{No easy way to confirm the theoretical in an unambigous experiment}{section.7}% 32
+\BOOKMARK [1][-]{section.8}{Conclusion}{}% 33
+\BOOKMARK [1][-]{section.9}{Appendices}{}% 34
+\BOOKMARK [2][-]{subsection.9.1}{Appendix A}{section.9}% 35
+\BOOKMARK [1][-]{section.10}{Bibliography}{}% 36
